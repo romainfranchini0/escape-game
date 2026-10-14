@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Dernier Jour de l'Horloger</title>
+<style>
+  body { font-family: Georgia, serif; background: #1b1410; color: #f3e5c8; margin: 0; padding: 20px; text-align: center; }
+  h1 { color: #d4a24c; }
+  .carte { max-width: 520px; margin: 20px auto; background: #2a1f17; border: 2px solid #d4a24c; border-radius: 14px; padding: 24px; display: none; }
+  .carte.actif { display: block; }
+  input { font-size: 1.1em; padding: 10px; width: 80%; margin: 10px 0; border-radius: 8px; border: none; text-align: center; }
+  button { background: #d4a24c; color: #1b1410; border: none; font-size: 1.1em; padding: 10px 24px; border-radius: 8px; cursor: pointer; }
+  .ok { color: #7fd17f; font-size: 1.3em; margin-top: 16px; }
+  .ko { color: #e07a7a; margin-top: 12px; }
+  .grille { display: grid; grid-template-columns: repeat(3, 60px); gap: 6px; justify-content: center; margin: 14px 0; }
+  .grille input { width: 60px; height: 60px; font-size: 1.4em; padding: 0; }
+  small { color: #b89d6a; }
+</style>
+</head>
+<body>
+<h1>🕰️ Journal de l'Horloger</h1>
+
+<div id="r4" class="carte">
+  <h2>⚙️ Le Balancier</h2>
+  <p>Trouvez <b>trois nombres entiers positifs</b> dont la somme est <b>12</b> et le produit est <b>48</b>.<br><small>Format : 1,2,3</small></p>
+  <input id="r4in" placeholder="a,b,c">
+  <br><button onclick="verifR4()">Valider</button>
+  <div id="r4out"></div>
+</div>
+
+<div id="b4" class="carte">
+  <h2>🔑 Les Aiguilles du Remontoir</h2>
+  <p>Il est <b>11h15</b>. Quel est le <b>plus petit angle</b> (en degrés) entre l'aiguille des heures et celle des minutes ?</p>
+  <input id="b4in" placeholder="ex : 90">
+  <br><button onclick="verifB4()">Valider</button>
+  <div id="b4out"></div>
+</div>
+
+<div id="v4" class="carte">
+  <h2>💎 Le Rubis magique</h2>
+  <p>Remplissez la grille avec les chiffres 1 à 9 (une seule fois chacun) pour que chaque ligne, colonne et diagonale fasse <b>15</b>.</p>
+  <div class="grille">
+    <input id="v0" maxlength="1" value="2" readonly><input id="v1" maxlength="1"><input id="v2" maxlength="1" value="6" readonly>
+    <input id="v3" maxlength="1"><input id="v4c" maxlength="1" value="5" readonly><input id="v5" maxlength="1">
+    <input id="v6" maxlength="1" value="4" readonly><input id="v7" maxlength="1"><input id="v8" maxlength="1" value="8" readonly>
+  </div>
+  <button onclick="verifV4()">Valider</button>
+  <div id="v4out"></div>
+</div>
+
+<div id="j4" class="carte">
+  <h2>🌙 Les Aiguilles qui se croisent</h2>
+  <p>En <b>12 heures</b>, combien de fois les aiguilles des heures et des minutes se <b>superposent-elles</b> ?</p>
+  <input id="j4in" placeholder="nombre">
+  <br><button onclick="verifJ4()">Valider</button>
+  <div id="j4out"></div>
+</div>
+
+<script>
+function afficher() {
+  document.querySelectorAll('.carte').forEach(c => c.classList.remove('actif'));
+  var id = location.hash.replace('#','');
+  var el = document.getElementById(id);
+  if (el) el.classList.add('actif');
+  else document.body.insertAdjacentHTML('beforeend','<p>Scannez le QR code de votre atelier.</p>');
+}
+window.addEventListener('hashchange', afficher);
+afficher();
+
+function sortie(id, ok, msgOk) {
+  document.getElementById(id).innerHTML = ok
+    ? '<div class="ok">' + msgOk + '</div>'
+    : '<div class="ko">Ce n\'est pas ça… réfléchissez encore !</div>';
+}
+function verifR4() {
+  var n = document.getElementById('r4in').value.split(/[,; ]+/).map(Number).filter(x => !isNaN(x)).sort((a,b)=>a-b);
+  var ok = n.length === 3 && n[0]===2 && n[1]===4 && n[2]===6;
+  sortie('r4out', ok, 'Balancier réglé ! 🎉<br>Chiffre des Engrenages : <b>4</b>');
+}
+function verifB4() {
+  var v = parseFloat(document.getElementById('b4in').value.replace(',','.').replace('°',''));
+  sortie('b4out', v === 112.5, 'Clé forgée ! 🎉<br>Chiffre des Remontoirs : <b>2</b>');
+}
+function verifV4() {
+  var ids = ['v0','v1','v2','v3','v4c','v5','v6','v7','v8'];
+  var s = ids.map(i => document.getElementById(i).value).join('');
+  sortie('v4out', s === '276951438', 'Rubis poli ! 🎉<br>Chiffre des Rubis : <b>7</b>');
+}
+function verifJ4() {
+  var v = parseInt(document.getElementById('j4in').value, 10);
+  sortie('j4out', v === 11, 'Aiguille alignée ! 🎉<br>Chiffre des Aiguilles : <b>9</b>');
+}
+</script>
+</body>
+</html>
